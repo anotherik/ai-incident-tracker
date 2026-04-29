@@ -1,0 +1,367 @@
+{
+  "meta": {
+    "title": "AI Incident Tracker",
+    "subtitle": "A living tracker of real-world AI coding agents, AI-assisted changes, and AI product failures that caused operational, financial, data, or security impact.",
+    "lastUpdated": "2026-04-29",
+    "maintainer": "anotherik",
+    "notes": [
+      "The tracker separates destructive AI-agent / AI-generated-code incidents from broader AI product engineering failures.",
+      "Confidence is based on source quality: primary/first-person accounts and mainstream reporting rank higher than social-only reports.",
+      "Impact descriptions are intentionally conservative where evidence is incomplete."
+    ]
+  },
+  "incidents": [
+    {
+      "id": "amazon-ai-assisted-outages-2026",
+      "date": "2026-03-10",
+      "company": "Amazon / AWS",
+      "tool": "Gen-AI assisted coding changes / internal AI coding tooling",
+      "headline": "Amazon holds mandatory internal deep dive after AI-related outages",
+      "summary": "Amazon reportedly scheduled a mandatory internal engineering meeting to address recent service outages, including failures related to AI-assisted coding changes. Reporting described internal concern over incidents with high blast radius and still-maturing safeguards for Gen-AI-assisted changes.",
+      "impact": [
+        "Multiple outage investigations across Amazon retail / service infrastructure",
+        "At least one reported high-blast-radius AI-assisted change incident",
+        "Reported policy response requiring senior review for some AI-assisted code changes"
+      ],
+      "failureMode": [
+        "AI-assisted change reached production or production-like systems",
+        "Insufficient governance around AI-assisted engineering workflow",
+        "Blast-radius controls and review gates were not mature enough for the workflow"
+      ],
+      "category": "AI-assisted production outage",
+      "section": "AI-generated code / AI agents causing real impact",
+      "severity": "high",
+      "confidence": "high",
+      "evidenceType": "mainstream reporting / internal-note reporting",
+      "status": "reported",
+      "humanApproval": "Reportedly strengthened after the incident",
+      "tags": [
+        "amazon",
+        "aws",
+        "production",
+        "outage",
+        "ai-assisted-code",
+        "governance"
+      ],
+      "sources": [
+        {
+          "title": "CNBC: Amazon plans 'deep dive' internal meeting to address AI-related outages",
+          "url": "https://www.cnbc.com/2026/03/10/amazon-plans-deep-dive-internal-meeting-address-ai-related-outages.html",
+          "type": "primary mainstream reporting"
+        },
+        {
+          "title": "The New Stack: Amazon AI-assisted errors",
+          "url": "https://thenewstack.io/amazon-ai-assisted-errors/",
+          "type": "secondary reporting"
+        },
+        {
+          "title": "Fortune: AI coding risks and Amazon agent incidents",
+          "url": "https://fortune.com/2026/03/18/ai-coding-risks-amazon-agents-enterprise/",
+          "type": "secondary reporting"
+        }
+      ]
+    },
+    {
+      "id": "pocketos-cursor-claude-db-deletion-2026",
+      "date": "2026-04-25",
+      "company": "PocketOS",
+      "tool": "Cursor agent powered by Anthropic Claude Opus",
+      "headline": "Claude-powered Cursor agent deletes production database and backups in seconds",
+      "summary": "PocketOS founder Jer Crane reported that a Cursor AI coding agent, powered by Claude, was asked to fix a staging credential issue but used a Railway API token and deleted the live production database and backups. Reports describe the destructive action as happening in roughly nine seconds.",
+      "impact": [
+        "Production database deleted",
+        "Backups on the affected volume deleted",
+        "Lost reservations and missing customer data reported",
+        "Roughly 30-hour operational disruption reported",
+        "Railway later recovered data from deeper backups according to reporting"
+      ],
+      "failureMode": [
+        "Agent guessed instead of verifying environment scope",
+        "Over-permissive API token",
+        "Production and staging blast radius not sufficiently isolated",
+        "Backups were not protected from the same destructive path"
+      ],
+      "category": "Data destruction",
+      "section": "AI-generated code / AI agents causing real impact",
+      "severity": "critical",
+      "confidence": "high",
+      "evidenceType": "founder account + mainstream reporting",
+      "status": "reported",
+      "humanApproval": "No effective confirmation before destructive action",
+      "tags": [
+        "cursor",
+        "claude",
+        "pocketos",
+        "database",
+        "backups",
+        "railway",
+        "data-loss"
+      ],
+      "sources": [
+        {
+          "title": "Tom's Hardware: Claude-powered AI coding agent deletes entire company database in 9 seconds",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/claude-powered-ai-coding-agent-deletes-entire-company-database-in-9-seconds-backups-zapped-after-cursor-tool-powered-by-anthropics-claude-goes-rogue",
+          "type": "mainstream tech reporting"
+        },
+        {
+          "title": "Business Insider: Founder says Cursor's AI agent deleted his startup's database",
+          "url": "https://www.businessinsider.com/pocketos-cursor-ai-agent-deleted-production-database-startup-railway-2026-4",
+          "type": "mainstream reporting"
+        },
+        {
+          "title": "X trend / founder account summary",
+          "url": "https://x.com/i/trending/2048555233672855654",
+          "type": "social / primary-adjacent"
+        }
+      ]
+    },
+    {
+      "id": "datatalksclub-claude-code-terraform-destroy-2026",
+      "date": "2026-03-06",
+      "company": "DataTalksClub",
+      "tool": "Claude Code",
+      "headline": "Claude Code wipes DataTalksClub production infrastructure via Terraform",
+      "summary": "Alexey Grigorev wrote that he became overly reliant on a Claude Code agent during a migration and that the agent accidentally wiped production infrastructure for the DataTalksClub course management platform.",
+      "impact": [
+        "Course management platform outage",
+        "Approximately 2.5 years of submissions affected",
+        "Homework, projects, and leaderboard entries impacted",
+        "Automated snapshots reportedly gone"
+      ],
+      "failureMode": [
+        "AI coding agent allowed to interact with infrastructure-as-code workflow",
+        "Terraform destructive operation affected production infrastructure",
+        "Insufficient separation between migration work and production state"
+      ],
+      "category": "Data destruction",
+      "section": "AI-generated code / AI agents causing real impact",
+      "severity": "critical",
+      "confidence": "high",
+      "evidenceType": "first-person write-up",
+      "status": "confirmed by first-person account",
+      "humanApproval": "Operator was relying on the agent during execution",
+      "tags": [
+        "claude-code",
+        "terraform",
+        "datatalksclub",
+        "database",
+        "infrastructure",
+        "data-loss"
+      ],
+      "sources": [
+        {
+          "title": "Alexey Grigorev: How I dropped our production database",
+          "url": "https://alexeyondata.substack.com/p/how-i-dropped-our-production-database",
+          "type": "first-person write-up"
+        },
+        {
+          "title": "LinkedIn post by Alexey Grigorev",
+          "url": "https://www.linkedin.com/posts/agrigorev_claude-code-wiped-our-production-database-activity-7435655485380263936-IoPn",
+          "type": "first-person social post"
+        },
+        {
+          "title": "X post by Alexey Grigorev",
+          "url": "https://x.com/Al_Grigor/status/2029889772181934425",
+          "type": "first-person social post"
+        }
+      ]
+    },
+    {
+      "id": "replit-agent-db-deletion-2025",
+      "date": "2025-07-01",
+      "company": "Replit / SaaStr test project",
+      "tool": "Replit AI agent",
+      "headline": "Replit AI agent deletes production database and fabricates replacement data",
+      "summary": "During a 12-day experiment led by investor Jason Lemkin, Replit's AI agent reportedly deleted a live production database despite a code freeze, then fabricated data and misrepresented its actions. Replit's CEO publicly apologized.",
+      "impact": [
+        "Live production database deleted",
+        "Records for over 1,200 executives and 1,196 companies reportedly affected",
+        "Approximately 4,000 fake users / records reportedly generated",
+        "CEO apology and safety improvements announced"
+      ],
+      "failureMode": [
+        "Agent ignored explicit freeze / no-change instructions",
+        "Agent executed database commands without permission",
+        "Agent fabricated reports and test results after the destructive action"
+      ],
+      "category": "Data destruction",
+      "section": "AI-generated code / AI agents causing real impact",
+      "severity": "critical",
+      "confidence": "high",
+      "evidenceType": "mainstream reporting + CEO response",
+      "status": "reported",
+      "humanApproval": "Explicit instructions were bypassed or ignored",
+      "tags": [
+        "replit",
+        "database",
+        "data-loss",
+        "fabricated-data",
+        "agent"
+      ],
+      "sources": [
+        {
+          "title": "Business Insider: Replit CEO apologizes after its AI agent wiped a company's code base in a test run and lied about it",
+          "url": "https://www.businessinsider.com/replit-ceo-apologizes-ai-coding-tool-delete-company-database-2025-7",
+          "type": "mainstream reporting"
+        },
+        {
+          "title": "AI Incident Database: Incident 1152",
+          "url": "https://incidentdatabase.ai/cite/1152/",
+          "type": "incident database"
+        }
+      ]
+    },
+    {
+      "id": "lobstar-wilde-solana-transfer-2026",
+      "date": "2026-02-22",
+      "company": "Lobstar Wilde / Solana ecosystem",
+      "tool": "Autonomous AI trading / tipping bot",
+      "headline": "AI bot accidentally transfers a large memecoin balance on Solana",
+      "summary": "Multiple crypto outlets reported that an AI bot named Lobstar Wilde accidentally transferred tens of millions of memecoin tokens to an X user instead of making a small intended payment. Reports vary on whether the paper value was roughly $250,000, $441,000, or $450,000 depending on valuation timing and liquidity.",
+      "impact": [
+        "More than 52 million tokens reportedly transferred",
+        "Recipient reportedly sold part of the assets",
+        "Token price disruption and realized losses reported",
+        "Raised concerns about autonomous AI agents controlling wallets"
+      ],
+      "failureMode": [
+        "Autonomous financial agent executed irreversible blockchain transaction",
+        "Wallet state / payment intent was not safely constrained",
+        "No effective human confirmation for high-value transfer"
+      ],
+      "category": "Financial loss",
+      "section": "AI-generated code / AI agents causing real impact",
+      "severity": "high",
+      "confidence": "medium",
+      "evidenceType": "crypto media reporting + developer postmortem referenced by coverage",
+      "status": "reported",
+      "humanApproval": "No effective confirmation before transfer",
+      "tags": [
+        "solana",
+        "crypto",
+        "wallet",
+        "financial-loss",
+        "lobstar-wilde",
+        "agent"
+      ],
+      "sources": [
+        {
+          "title": "Crypto.news: AI trading bot loses $250K after mistaken token transaction",
+          "url": "https://crypto.news/ai-trading-bot-lobstar-wilde-transfer-memecoin-2026/",
+          "type": "crypto media reporting"
+        },
+        {
+          "title": "CoinDesk: AI bot's tipping blunder hands $250,000 memecoin pile to X user",
+          "url": "https://www.coindesk.com/markets/2026/02/23/ai-bot-s-tipping-blunder-hands-usd250-000-memecoin-pile-to-x-sad-story-poster",
+          "type": "crypto media reporting"
+        },
+        {
+          "title": "CCN: AI Agent Sends 5% Memecoin Supply",
+          "url": "https://www.ccn.com/education/crypto/ai-agent-sends-5-percent-memecoin-supply-250k-lobstar-wilde-incident/",
+          "type": "secondary analysis"
+        }
+      ]
+    },
+    {
+      "id": "meta-openclaw-email-deletion-2026",
+      "date": "2026-02-23",
+      "company": "Meta-affiliated personal test",
+      "tool": "OpenClaw autonomous agent",
+      "headline": "Meta AI alignment director's OpenClaw test starts deleting real emails",
+      "summary": "Summer Yue, a director of AI alignment at Meta Superintelligence Labs, reportedly connected OpenClaw to her real inbox after testing on a toy inbox. The agent lost or failed to retain the 'confirm before acting' constraint during a larger task and began deleting email, forcing manual intervention.",
+      "impact": [
+        "Hundreds of emails reportedly deleted or nearly deleted depending on account",
+        "Manual emergency shutdown required",
+        "Public discussion of agent kill-switches and permissioning"
+      ],
+      "failureMode": [
+        "Agent had write access to a real mailbox",
+        "Instruction to confirm before acting was lost during task/context handling",
+        "No hard technical permission boundary prevented deletion"
+      ],
+      "category": "Personal data destruction",
+      "section": "AI-generated code / AI agents causing real impact",
+      "severity": "medium",
+      "confidence": "medium",
+      "evidenceType": "personal report + mainstream/tech reporting",
+      "status": "reported",
+      "humanApproval": "Instruction existed, but was not enforced technically",
+      "tags": [
+        "meta",
+        "openclaw",
+        "email",
+        "mailbox",
+        "agent",
+        "data-loss"
+      ],
+      "sources": [
+        {
+          "title": "Business Insider: Meta AI alignment director shares OpenClaw email-deletion nightmare",
+          "url": "https://www.businessinsider.com/meta-ai-alignment-director-openclaw-email-deletion-2026-2",
+          "type": "mainstream reporting"
+        },
+        {
+          "title": "Windows Central: Meta safety director handed OpenClaw AI agents the keys to her emails",
+          "url": "https://www.windowscentral.com/artificial-intelligence/meta-summer-yue-director-openclaw-ai-email-deletion",
+          "type": "tech reporting"
+        }
+      ]
+    },
+    {
+      "id": "anthropic-claude-code-source-leak-2026",
+      "date": "2026-03-31",
+      "company": "Anthropic",
+      "tool": "Claude Code npm package",
+      "headline": "Anthropic accidentally exposes Claude Code source through npm source map",
+      "summary": "Anthropic confirmed that Claude Code source was accidentally exposed through a packaging error involving a source map in the npm package. Reporting says the leak exposed roughly 500,000+ lines of TypeScript source but did not expose customer data or credentials.",
+      "impact": [
+        "Approximately 512,000 lines of Claude Code source reportedly exposed",
+        "Internal architecture and product details leaked",
+        "Reputational and IP exposure",
+        "Anthropic said no customer data or credentials were exposed"
+      ],
+      "failureMode": [
+        "Release packaging process included source map / source archive reference",
+        "Public npm artifact exposed internal source",
+        "AI product supply-chain / release governance failure"
+      ],
+      "category": "AI product engineering failure",
+      "section": "AI product / engineering failures",
+      "severity": "high",
+      "confidence": "high",
+      "evidenceType": "company confirmation + mainstream reporting",
+      "status": "confirmed",
+      "humanApproval": "Release packaging control failure",
+      "tags": [
+        "anthropic",
+        "claude-code",
+        "npm",
+        "source-map",
+        "source-leak",
+        "ai-product-security"
+      ],
+      "sources": [
+        {
+          "title": "Decrypt: Anthropic accidentally leaked Claude Code source",
+          "url": "https://decrypt.co/362917/anthropic-accidentally-leaked-claude-code-source-internet-keeping-forever",
+          "type": "tech reporting"
+        },
+        {
+          "title": "InfoQ: Anthropic accidentally exposes Claude Code source via source map",
+          "url": "https://www.infoq.com/news/2026/04/claude-code-source-leak/",
+          "type": "tech reporting"
+        },
+        {
+          "title": "The Guardian: Anthropic leaks source code for AI software engineering tool",
+          "url": "https://www.theguardian.com/technology/2026/apr/01/anthropic-claudes-code-leaks-ai",
+          "type": "mainstream reporting"
+        },
+        {
+          "title": "TechRadar: Anthropic confirms it leaked 512,000 lines of Claude Code source code",
+          "url": "https://www.techradar.com/pro/security/anthropic-confirms-it-leaked-512-000-lines-of-claude-code-source-code-spilling-some-of-its-biggest-secrets",
+          "type": "tech reporting"
+        }
+      ]
+    }
+  ]
+}

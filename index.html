@@ -19,13 +19,10 @@
       --green: #7ee787;
       --yellow: #d29922;
       --red: #f85149;
-      --purple: #c792ea;
       --white: #c9d1d9;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -43,9 +40,7 @@
       text-decoration: none;
     }
 
-    a:hover {
-      text-decoration: underline;
-    }
+    a:hover { text-decoration: underline; }
 
     header {
       max-width: 1120px;
@@ -76,9 +71,7 @@
       flex-wrap: wrap;
     }
 
-    .hero {
-      max-width: 900px;
-    }
+    .hero { max-width: 900px; }
 
     .eyebrow {
       color: var(--cyan);
@@ -213,17 +206,11 @@
       letter-spacing: 0.08em;
     }
 
-    td {
-      color: var(--white);
-    }
+    td { color: var(--white); }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
+    tr:last-child td { border-bottom: none; }
 
-    .muted {
-      color: var(--muted);
-    }
+    .muted { color: var(--muted); }
 
     .cards {
       display: grid;
@@ -231,8 +218,7 @@
     }
 
     .incident {
-      background:
-        linear-gradient(180deg, rgba(22, 27, 34, 0.96), rgba(13, 17, 23, 0.96));
+      background: linear-gradient(180deg, rgba(22, 27, 34, 0.96), rgba(13, 17, 23, 0.96));
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 20px;
@@ -298,9 +284,15 @@
       margin-bottom: 4px;
     }
 
-    .info span {
+    .info span,
+    .info ul {
       color: var(--white);
       font-size: 0.9rem;
+    }
+
+    .info ul {
+      margin: 0;
+      padding-left: 18px;
     }
 
     .badges {
@@ -346,6 +338,21 @@
       border-color: rgba(248, 81, 73, 0.35);
     }
 
+    .severity-critical {
+      color: var(--red);
+      border-color: rgba(248, 81, 73, 0.35);
+    }
+
+    .severity-high {
+      color: var(--yellow);
+      border-color: rgba(210, 153, 34, 0.35);
+    }
+
+    .severity-medium {
+      color: var(--cyan);
+      border-color: rgba(120, 220, 232, 0.35);
+    }
+
     .sources {
       margin-top: 15px;
       border-top: 1px solid var(--border);
@@ -388,33 +395,18 @@
     }
 
     @media (max-width: 850px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .toolbar {
         grid-template-columns: 1fr;
         position: static;
       }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .incident-head {
-        flex-direction: column;
-      }
+      .grid { grid-template-columns: 1fr; }
+      .incident-head { flex-direction: column; }
     }
 
     @media (max-width: 520px) {
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      header {
-        padding-top: 28px;
-      }
-
+      .stats { grid-template-columns: 1fr; }
+      header { padding-top: 28px; }
       nav {
         align-items: flex-start;
         flex-direction: column;
@@ -436,13 +428,13 @@
 
     <section class="hero">
       <div class="eyebrow">AI is doing great, apparently</div>
-      <h1>AI Incident Tracker</h1>
-      <p class="subtitle">
+      <h1 id="pageTitle">AI Incident Tracker</h1>
+      <p class="subtitle" id="pageSubtitle">
         A living tracker of real-world cases where AI-generated code, AI coding agents,
         or AI tooling caused production impact, data loss, financial loss, operational disruption,
         or security exposure.
       </p>
-      <p class="note">
+      <p class="note" id="pageNote">
         This page separates stronger, well-sourced incidents from weaker or anecdotal reports.
         The goal is documentation, not hype.
       </p>
@@ -484,6 +476,7 @@
         <option value="newest">Newest first</option>
         <option value="oldest">Oldest first</option>
         <option value="confidence">Confidence</option>
+        <option value="severity">Severity</option>
         <option value="company">Company A-Z</option>
       </select>
     </section>
@@ -514,11 +507,13 @@
     <a href="https://raw.githubusercontent.com/anotherik/ai-incident-tracker/refs/heads/main/incidents.json">
       incidents.json
     </a>
+    <span id="lastUpdated"></span>
   </footer>
 
   <script>
     const INCIDENTS_URL = "https://raw.githubusercontent.com/anotherik/ai-incident-tracker/refs/heads/main/incidents.json";
 
+    let siteMeta = {};
     let incidents = [];
 
     async function loadData() {
@@ -530,11 +525,21 @@
 
       const data = await response.json();
 
-      if (!Array.isArray(data)) {
-        throw new Error("incidents.json must be an array of incident objects.");
+      if (Array.isArray(data)) {
+        return {
+          meta: {},
+          incidents: data
+        };
       }
 
-      return data;
+      if (data && Array.isArray(data.incidents)) {
+        return {
+          meta: data.meta || {},
+          incidents: data.incidents
+        };
+      }
+
+      throw new Error("incidents.json must contain an incidents array.");
     }
 
     function normalizeDate(value) {
@@ -570,10 +575,25 @@
       return rank[String(value || "").toLowerCase()] || 0;
     }
 
+    function severityRank(value) {
+      const rank = {
+        "critical": 4,
+        "high": 3,
+        "medium": 2,
+        "low": 1
+      };
+
+      return rank[String(value || "").toLowerCase()] || 0;
+    }
+
     function confidenceClass(value) {
       return String(value || "unknown")
         .toLowerCase()
         .replace(/\s+/g, "-");
+    }
+
+    function severityClass(value) {
+      return `severity-${String(value || "unknown").toLowerCase().replace(/\s+/g, "-")}`;
     }
 
     function escapeHtml(value) {
@@ -585,21 +605,56 @@
         .replaceAll("'", "&#039;");
     }
 
+    function asListHtml(value) {
+      if (Array.isArray(value)) {
+        return `<ul>${value.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+      }
+
+      if (value) {
+        return `<span>${escapeHtml(value)}</span>`;
+      }
+
+      return `<span>Not specified</span>`;
+    }
+
+    function getHeadline(item) {
+      return item.headline || item.title || "Untitled incident";
+    }
+
+    function getSummary(item) {
+      return item.summary || item.description || "";
+    }
+
+    function getRootCause(item) {
+      return item.failureMode || item.root_cause || "Not specified";
+    }
+
+    function getPrimaryCategory(item) {
+      return item.category || item.type || "Uncategorized";
+    }
+
     function getTextBlob(item) {
       return [
+        item.id,
         item.date,
         item.company,
         item.project,
-        item.title,
+        getHeadline(item),
         item.tool,
         item.category,
+        item.section,
         item.type,
-        item.description,
-        item.impact,
+        getSummary(item),
+        Array.isArray(item.impact) ? item.impact.join(" ") : item.impact,
+        Array.isArray(item.failureMode) ? item.failureMode.join(" ") : item.failureMode,
         item.root_cause,
+        item.severity,
         item.confidence,
+        item.evidenceType,
+        item.status,
+        item.humanApproval,
         ...(item.tags || []),
-        ...(item.sources || []).map(source => `${source.name} ${source.url}`)
+        ...(item.sources || []).map(source => `${source.title || source.name || ""} ${source.url || ""} ${source.type || ""}`)
       ].join(" ").toLowerCase();
     }
 
@@ -612,7 +667,10 @@
       const categoryFilter = document.getElementById("categoryFilter");
       const confidenceFilter = document.getElementById("confidenceFilter");
 
-      const categories = uniqueSorted(data.map(item => item.category || item.type));
+      categoryFilter.innerHTML = `<option value="all">All categories</option>`;
+      confidenceFilter.innerHTML = `<option value="all">All confidence levels</option>`;
+
+      const categories = uniqueSorted(data.map(item => getPrimaryCategory(item)));
       const confidences = uniqueSorted(data.map(item => item.confidence));
 
       for (const category of categories) {
@@ -630,10 +688,29 @@
       }
     }
 
+    function updateMeta(meta) {
+      if (meta.title) {
+        document.title = meta.title;
+        document.getElementById("pageTitle").textContent = meta.title;
+      }
+
+      if (meta.subtitle) {
+        document.getElementById("pageSubtitle").textContent = meta.subtitle;
+      }
+
+      if (Array.isArray(meta.notes) && meta.notes.length > 0) {
+        document.getElementById("pageNote").textContent = meta.notes[0];
+      }
+
+      if (meta.lastUpdated) {
+        document.getElementById("lastUpdated").textContent = ` · Last updated: ${meta.lastUpdated}`;
+      }
+    }
+
     function updateStats(data) {
       const total = data.length;
       const high = data.filter(item => String(item.confidence || "").toLowerCase() === "high").length;
-      const categories = new Set(data.map(item => item.category || item.type).filter(Boolean)).size;
+      const categories = new Set(data.map(item => getPrimaryCategory(item)).filter(Boolean)).size;
       const sources = data.reduce((count, item) => count + ((item.sources || []).length), 0);
 
       document.getElementById("statTotal").textContent = total;
@@ -648,7 +725,7 @@
       const confidence = document.getElementById("confidenceFilter").value;
 
       return data.filter(item => {
-        const itemCategory = item.category || item.type || "";
+        const itemCategory = getPrimaryCategory(item);
         const itemConfidence = String(item.confidence || "").toLowerCase();
 
         const matchesQuery = !query || getTextBlob(item).includes(query);
@@ -678,6 +755,13 @@
         });
       }
 
+      if (sort === "severity") {
+        copy.sort((a, b) => {
+          const diff = severityRank(b.severity) - severityRank(a.severity);
+          return diff || normalizeDate(b.date) - normalizeDate(a.date);
+        });
+      }
+
       if (sort === "company") {
         copy.sort((a, b) => String(a.company || "").localeCompare(String(b.company || "")));
       }
@@ -697,20 +781,26 @@
         return;
       }
 
-      tbody.innerHTML = data.map(item => `
-        <tr>
-          <td>${escapeHtml(item.date || "Unknown")}</td>
-          <td>${escapeHtml(item.company || item.project || "Unknown")}</td>
-          <td>${escapeHtml(item.tool || "Unknown")}</td>
-          <td>${escapeHtml(item.title || "Untitled incident")}</td>
-          <td>${escapeHtml(item.impact || "Not specified")}</td>
-          <td>
-            <span class="badge ${confidenceClass(item.confidence)}">
-              ${escapeHtml(item.confidence || "Unknown")}
-            </span>
-          </td>
-        </tr>
-      `).join("");
+      tbody.innerHTML = data.map(item => {
+        const impact = Array.isArray(item.impact)
+          ? item.impact[0]
+          : item.impact;
+
+        return `
+          <tr>
+            <td>${escapeHtml(item.date || "Unknown")}</td>
+            <td>${escapeHtml(item.company || item.project || "Unknown")}</td>
+            <td>${escapeHtml(item.tool || "Unknown")}</td>
+            <td>${escapeHtml(getHeadline(item))}</td>
+            <td>${escapeHtml(impact || "Not specified")}</td>
+            <td>
+              <span class="badge ${confidenceClass(item.confidence)}">
+                ${escapeHtml(item.confidence || "Unknown")}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join("");
     }
 
     function renderIncidents(data) {
@@ -725,44 +815,62 @@
         const sources = (item.sources || []).map(source => `
           <li>
             <a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">
-              ${escapeHtml(source.name || source.url)}
+              ${escapeHtml(source.title || source.name || source.url)}
             </a>
+            ${source.type ? `<span class="muted"> — ${escapeHtml(source.type)}</span>` : ""}
           </li>
         `).join("");
 
         const tags = [
-          item.category || item.type,
+          getPrimaryCategory(item),
+          item.section,
           item.tool,
+          item.status,
           ...(item.tags || [])
         ].filter(Boolean);
 
         return `
-          <article class="incident">
+          <article class="incident" id="${escapeHtml(item.id || "")}">
             <div class="incident-head">
               <div>
-                <h3>${escapeHtml(item.company || item.project || "Unknown")} — ${escapeHtml(item.title || "Untitled incident")}</h3>
+                <h3>${escapeHtml(item.company || item.project || "Unknown")} — ${escapeHtml(getHeadline(item))}</h3>
                 <div class="meta">
                   ${escapeHtml(item.date || "Unknown date")}
-                  ${item.type ? ` · ${escapeHtml(item.type)}` : ""}
+                  ${item.evidenceType ? ` · ${escapeHtml(item.evidenceType)}` : ""}
                 </div>
               </div>
 
-              <span class="badge ${confidenceClass(item.confidence)}">
-                ${escapeHtml(item.confidence || "Unknown")} confidence
-              </span>
+              <div class="badges" style="margin-top:0;">
+                <span class="badge ${severityClass(item.severity)}">
+                  ${escapeHtml(item.severity || "unknown")} severity
+                </span>
+                <span class="badge ${confidenceClass(item.confidence)}">
+                  ${escapeHtml(item.confidence || "unknown")} confidence
+                </span>
+              </div>
             </div>
 
-            <p class="description">${escapeHtml(item.description || "")}</p>
+            <p class="description">${escapeHtml(getSummary(item))}</p>
 
             <div class="grid">
               <div class="info">
                 <strong>Impact</strong>
-                <span>${escapeHtml(item.impact || "Not specified")}</span>
+                ${asListHtml(item.impact)}
               </div>
 
               <div class="info">
-                <strong>Root cause pattern</strong>
-                <span>${escapeHtml(item.root_cause || "Not specified")}</span>
+                <strong>Failure mode</strong>
+                ${asListHtml(getRootCause(item))}
+              </div>
+
+              <div class="info">
+                <strong>Human approval</strong>
+                <span>${escapeHtml(item.humanApproval || "Not specified")}</span>
+              </div>
+
+              <div class="info">
+                <strong>Status</strong>
+                <span>${escapeHtml(item.status || "Not specified")}</span>
               </div>
             </div>
 
@@ -793,8 +901,11 @@
       const container = document.getElementById("incidents");
       container.innerHTML = `<div class="empty">Loading incidents...</div>`;
 
-      incidents = await loadData();
+      const loaded = await loadData();
+      siteMeta = loaded.meta;
+      incidents = loaded.incidents;
 
+      updateMeta(siteMeta);
       populateFilters(incidents);
       updateStats(incidents);
 

@@ -7,6 +7,59 @@
     "notes": []
   },
   "incidents": [
+      {
+      "id": "chatgpt-codex-powershell-drive-wipe-2026",
+      "date": "2026-02-21",
+      "company": "Individual developer (Reddit user)",
+      "tool": "ChatGPT Codex 5.3 (OpenAI)",
+      "headline": "ChatGPT Codex generates flawed PowerShell script that wipes developer's entire drive",
+      "summary": "A developer asked ChatGPT Codex 5.3 to generate a PowerShell script to clean up Python __pycache__ folders. The generated script used a backslash to escape quotation marks in an rmdir command invoked via cmd.exe. PowerShell's cmd.exe interop did not handle the escaping correctly, reducing the path variable to a bare backslash — interpreted by Windows as the drive root. Combined with /s /q flags (recursive, no confirmation), the command executed rmdir /s /q F:\\ on every iteration, wiping all contents of the F: drive including project files and Docker data. The developer reported the incident on Reddit; Codex acknowledged the error after the fact.",
+      "impact": [
+        "Entire F: drive contents deleted",
+        "Project files and Docker data lost",
+        "No in-script safeguard or confirmation prompt prevented execution"
+      ],
+      "failureMode": [
+        "AI-generated code used an incorrect escape character for the target shell context",
+        "Path collapsed to drive root due to backslash misinterpretation in cmd.exe",
+        "rmdir /s /q executed without any guard against operating on root paths",
+        "Developer executed generated code without review"
+      ],
+      "category": "Data destruction",
+      "section": "AI-generated code / AI agents causing real impact",
+      "severity": "high",
+      "confidence": "medium",
+      "evidenceType": "Reddit first-person account + corroborating tech press",
+      "status": "reported",
+      "humanApproval": "Developer executed script without reviewing generated code",
+      "tags": [
+        "openai",
+        "chatgpt",
+        "codex",
+        "powershell",
+        "windows",
+        "data-loss",
+        "ai-generated-code",
+        "path-traversal"
+      ],
+      "sources": [
+        {
+          "title": "Reddit (r/vibecoding): GPT 5.3 Codex wiped my entire F: drive with a single script",
+          "url": "https://www.reddit.com/r/vibecoding/comments/1r96647/gpt_53_codex_wiped_my_entire_f_drive_with_a/",
+          "type": "first-person account"
+        },
+        {
+          "title": "NotebookCheck: ChatGPT 5.3 Codex erases entire hard drive thanks to tiny error",
+          "url": "https://www.notebookcheck.net/ChatGPT-5-3-Codex-erases-entire-hard-drive-thanks-to-tiny-error.1231484.0.html",
+          "type": "tech press reporting"
+        },
+        {
+          "title": "Gizmochina: Single character in AI-generated script wipes developer's entire hard drive",
+          "url": "https://www.gizmochina.com/2026/02/22/single-character-in-ai-generated-script-wipes-developers-hard-drive/",
+          "type": "tech press reporting"
+        }
+      ]
+    },
     {
       "id": "amazon-ai-assisted-outages-2026",
       "date": "2026-03-10",

@@ -96,12 +96,6 @@
       margin-top: 20px;
     }
 
-    .note {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 0.88rem;
-    }
-
     main {
       max-width: 1120px;
       margin: 0 auto;
@@ -209,6 +203,30 @@
     td { color: var(--white); }
 
     tr:last-child td { border-bottom: none; }
+
+    .summary-link {
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .summary-link:hover {
+      color: var(--cyan);
+      text-decoration: underline;
+    }
+
+    .confidence-note {
+      margin: -12px 0 28px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(17, 24, 32, 0.72);
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .confidence-note strong {
+      color: var(--cyan);
+    }
 
     .muted { color: var(--muted); }
 
@@ -385,6 +403,12 @@
       color: var(--muted);
     }
 
+    .dataset-note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
     footer {
       max-width: 1120px;
       margin: 0 auto;
@@ -433,10 +457,6 @@
         A living tracker of real-world cases where AI-generated code, AI coding agents,
         or AI tooling caused production impact, data loss, financial loss, operational disruption,
         or security exposure.
-      </p>
-      <p class="note" id="pageNote">
-        This page separates stronger, well-sourced incidents from weaker or anecdotal reports.
-        The goal is documentation, not hype.
       </p>
     </section>
   </header>
@@ -498,20 +518,31 @@
       </table>
     </section>
 
+    <div class="confidence-note">
+      <strong>Confidence</strong>:
+      `high` = multiple strong primary or well-corroborated sources;
+      `medium-high` = strong reporting with minor gaps;
+      `medium` = plausible and sourced but incomplete;
+      `medium-low` = limited corroboration or notable ambiguity;
+      `low` = anecdotal, weakly sourced, or still unverified.
+    </div>
+
     <h2 class="section-title">Incident details</h2>
     <section id="incidents" class="cards"></section>
+
+    <div class="dataset-note">
+      Dataset loaded from:
+      <a href="incidents.json">incidents.json</a>
+      <span id="lastUpdated"></span>
+    </div>
   </main>
 
   <footer>
-    Dataset loaded from:
-    <a href="https://raw.githubusercontent.com/anotherik/ai-incident-tracker/refs/heads/main/incidents.json">
-      incidents.json
-    </a>
-    <span id="lastUpdated"></span>
+    &copy; Ricardo Gonçalves &bull; 2026
   </footer>
 
   <script>
-    const INCIDENTS_URL = "https://raw.githubusercontent.com/anotherik/ai-incident-tracker/refs/heads/main/incidents.json";
+    const INCIDENTS_URL = "incidents.json";
 
     let siteMeta = {};
     let incidents = [];
@@ -633,6 +664,18 @@
       return item.category || item.type || "Uncategorized";
     }
 
+    function getIncidentAnchor(item, index) {
+      if (item.id) {
+        return String(item.id).trim();
+      }
+
+      const seed = `${item.date || "unknown"}-${item.company || item.project || "incident"}-${getHeadline(item)}-${index}`;
+      return seed
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
     function getTextBlob(item) {
       return [
         item.id,
@@ -696,10 +739,6 @@
 
       if (meta.subtitle) {
         document.getElementById("pageSubtitle").textContent = meta.subtitle;
-      }
-
-      if (Array.isArray(meta.notes) && meta.notes.length > 0) {
-        document.getElementById("pageNote").textContent = meta.notes[0];
       }
 
       if (meta.lastUpdated) {
@@ -781,17 +820,22 @@
         return;
       }
 
-      tbody.innerHTML = data.map(item => {
+      tbody.innerHTML = data.map((item, index) => {
         const impact = Array.isArray(item.impact)
           ? item.impact[0]
           : item.impact;
+        const anchor = getIncidentAnchor(item, index);
 
         return `
           <tr>
             <td>${escapeHtml(item.date || "Unknown")}</td>
             <td>${escapeHtml(item.company || item.project || "Unknown")}</td>
             <td>${escapeHtml(item.tool || "Unknown")}</td>
-            <td>${escapeHtml(getHeadline(item))}</td>
+            <td>
+              <a class="summary-link" href="#${escapeHtml(anchor)}">
+                ${escapeHtml(getHeadline(item))}
+              </a>
+            </td>
             <td>${escapeHtml(impact || "Not specified")}</td>
             <td>
               <span class="badge ${confidenceClass(item.confidence)}">
@@ -811,7 +855,7 @@
         return;
       }
 
-      container.innerHTML = data.map(item => {
+      container.innerHTML = data.map((item, index) => {
         const sources = (item.sources || []).map(source => `
           <li>
             <a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">
@@ -828,9 +872,10 @@
           item.status,
           ...(item.tags || [])
         ].filter(Boolean);
+        const anchor = getIncidentAnchor(item, index);
 
         return `
-          <article class="incident" id="${escapeHtml(item.id || "")}">
+          <article class="incident" id="${escapeHtml(anchor)}">
             <div class="incident-head">
               <div>
                 <h3>${escapeHtml(item.company || item.project || "Unknown")} — ${escapeHtml(getHeadline(item))}</h3>

@@ -4,11 +4,7 @@
     "subtitle": "A living tracker of real-world AI coding agents, AI-assisted changes, and AI product failures that caused operational, financial, data, or security impact.",
     "lastUpdated": "2026-04-29",
     "maintainer": "anotherik",
-    "notes": [
-      "The tracker separates destructive AI-agent / AI-generated-code incidents from broader AI product engineering failures.",
-      "Confidence is based on source quality: primary/first-person accounts and mainstream reporting rank higher than social-only reports.",
-      "Impact descriptions are intentionally conservative where evidence is incomplete."
-    ]
+    "notes": []
   },
   "incidents": [
     {
